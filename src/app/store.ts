@@ -1,44 +1,77 @@
-import { configureStore } from '@reduxjs/toolkit';
-import rootReducer from './rootReducer';
-import { AuthState } from './features/auth/auth.type';
-import { api } from './services/api';
+// src/app/store.ts
+import { configureStore } from '@reduxjs/toolkit'
+import rootReducer from './rootReducer'
+import type { AuthState } from './features/auth/auth.type'
+import { api, mockApi } from './services'
+
+/* ----------------------------------
+   localStorage helpers (ใช้เฉพาะ prod)
+----------------------------------- */
 function saveAuthToLocalStorage(auth: AuthState) {
     try {
-        const serializedState = JSON.stringify(auth);
-        localStorage.setItem('auth', serializedState);
+        localStorage.setItem('auth', JSON.stringify(auth))
     } catch (e) {
-        console.log(e);
+        console.error(e)
     }
-
 }
-function loadAuthFromLocalStorage() {
+
+function loadAuthFromLocalStorage(): AuthState | undefined {
     try {
-        const serializedState = localStorage.getItem('auth');
-        if (serializedState === null) return undefined;
-        return JSON.parse(serializedState);
+        const serialized = localStorage.getItem('auth')
+        if (!serialized) return undefined
+        return JSON.parse(serialized)
     } catch (e) {
-        console.log(e);
-        return undefined;
+        console.error(e)
+        return undefined
     }
 }
 
-const preloadedState = { auth: loadAuthFromLocalStorage() };
+/* ----------------------------------
+   1️⃣ setupStore (หัวใจของการ test)
+----------------------------------- */
+export const setupStore = (
+    preloadedState?: Partial<RootState>,
+    options?: {
+        api?: typeof api
+    }
+) => {
+    return configureStore({
+        reducer: rootReducer,
+        preloadedState,
+        middleware: (getDefaultMiddleware) =>
+            getDefaultMiddleware({
+                thunk: {
+                    // 👈 inject api เข้า thunk
+                    extraArgument: {
+                        api: options?.api ?? mockApi,
+                    },
+                },
+            }),
+    })
+}
 
-export const store = configureStore({
-    reducer: rootReducer,
-    preloadedState,
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware({
-        thunk: {
-            extraArgument: { api },
-        },
-    }),
-});
+/* ----------------------------------
+   2️⃣ store สำหรับ production จริง
+----------------------------------- */
+const preloadedState = {
+    auth: loadAuthFromLocalStorage(),
+}
+
+export const store = setupStore(preloadedState, {
+    api: mockApi, // 👈 ใช้ mockApi แทน api
+})
+
+/* ----------------------------------
+   3️⃣ subscribe เฉพาะ prod
+----------------------------------- */
 store.subscribe(() => {
-    const state = store.getState();
-    saveAuthToLocalStorage(state.auth);
-});
+    const state = store.getState()
+    saveAuthToLocalStorage(state.auth)
+})
 
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
-
-
+/* ----------------------------------
+   4️⃣ Types (สำคัญมาก)
+----------------------------------- */
+export type AppStore = ReturnType<typeof setupStore>
+export type RootState = ReturnType<typeof rootReducer>
+export type AppDispatch = AppStore['dispatch']

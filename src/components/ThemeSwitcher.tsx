@@ -5,6 +5,7 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
+import Box from '@mui/material/Box';
 
 export default function ThemeSwitcher() {
   const theme = useTheme();
@@ -25,7 +26,7 @@ export default function ThemeSwitcher() {
       title={`${paletteMode === 'dark' ? 'Light' : 'Dark'} mode`}
       enterDelay={1000}
     >
-      <div>
+      <Box>
         <IconButton
           size="small"
           aria-label={`Switch to ${paletteMode === 'dark' ? 'light' : 'dark'} mode`}
@@ -52,7 +53,7 @@ export default function ThemeSwitcher() {
             </React.Fragment>
           ) : null}
         </IconButton>
-      </div>
+      </Box>
     </Tooltip>
   );
 }

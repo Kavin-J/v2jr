@@ -13,8 +13,8 @@ import Typography from '@mui/material/Typography';
 import type { } from '@mui/material/themeCssVarsAugmentation';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Link } from 'react-router';
-import AppSidebarContext from '../../context/AppSidebarContext';
-import { MINI_DRAWER_WIDTH } from '../../constants';
+import AppSidebarContext from '../../../context/AppSidebarContext';
+import { MINI_DRAWER_WIDTH } from '../../../constants';
 
 export interface AppSidebarPageItemProps {
   id: string;

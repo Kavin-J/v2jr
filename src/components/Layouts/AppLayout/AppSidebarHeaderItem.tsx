@@ -1,9 +1,9 @@
 import * as React from 'react';
 import ListSubheader from '@mui/material/ListSubheader';
 import type { } from '@mui/material/themeCssVarsAugmentation';
-import AppSidebarContext from '../../context/AppSidebarContext';
-import { DRAWER_WIDTH } from '../../constants';
-import { getDrawerSxTransitionMixin } from '../../mixins';
+import AppSidebarContext from '../../../context/AppSidebarContext';
+import { DRAWER_WIDTH } from '../../../constants';
+import { getDrawerSxTransitionMixin } from '../../../mixins';
 
 export interface AppSidebarHeaderItemProps {
   children?: React.ReactNode;

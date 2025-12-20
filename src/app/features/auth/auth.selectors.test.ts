@@ -1,15 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import {
     selectAuth,
-    selectUser,
+    selectAuthUser,
     selectIsAuthenticated,
-    selectRole,
+    selectAuthRole,
     selectAuthToken,
-    selectError,
-    selectLoading,
+    selectAuthError,
+    selectAuthLoading,
 } from './auth.selectors';
 import { RootState } from '../../store';
-import { AuthState } from './auth.type';
 
 describe('auth selectors', () => {
     const mockState: RootState = {
@@ -20,6 +19,7 @@ describe('auth selectors', () => {
                 email: 'test@example.com',
                 role: 'admin',
                 avatar: 'avatar-url',
+                token: 'test-token'
             },
             token: 'test-token',
             isAuthenticated: true,
@@ -33,7 +33,7 @@ describe('auth selectors', () => {
     });
 
     it('should select the user', () => {
-        expect(selectUser(mockState)).toEqual(mockState.auth.user);
+        expect(selectAuthUser(mockState)).toEqual(mockState.auth.user);
     });
 
     it('should select isAuthenticated', () => {
@@ -41,7 +41,7 @@ describe('auth selectors', () => {
     });
 
     it('should select the user role', () => {
-        expect(selectRole(mockState)).toBe('admin');
+        expect(selectAuthRole(mockState)).toBe('admin');
     });
 
     it('should select the auth token', () => {
@@ -49,11 +49,11 @@ describe('auth selectors', () => {
     });
 
     it('should select the error', () => {
-        expect(selectError(mockState)).toBe('Some error');
+        expect(selectAuthError(mockState)).toBe('Some error');
     });
 
     it('should select loading status', () => {
-        expect(selectLoading(mockState)).toBe(true);
+        expect(selectAuthLoading(mockState)).toBe(true);
     });
 
     it('should return undefined for role if user is null', () => {
@@ -63,6 +63,6 @@ describe('auth selectors', () => {
                 user: null,
             },
         } as RootState;
-        expect(selectRole(stateWithNoUser)).toBeUndefined();
+        expect(selectAuthRole(stateWithNoUser)).toBeUndefined();
     });
 });

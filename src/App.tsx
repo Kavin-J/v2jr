@@ -1,10 +1,5 @@
 import CssBaseline from '@mui/material/CssBaseline';
-import { createHashRouter, RouterProvider } from 'react-router';
-import DashboardLayout from './components/Layouts/AppLayout';
-import EmployeeList from './components/EmployeeList';
-import EmployeeShow from './components/EmployeeShow';
-import EmployeeCreate from './components/EmployeeCreate';
-import EmployeeEdit from './components/EmployeeEdit';
+import { createBrowserRouter, RouterProvider } from 'react-router';
 import NotificationsProvider from './hooks/useNotifications/NotificationsProvider';
 import DialogsProvider from './hooks/useDialogs/DialogsProvider';
 import AppTheme from './theme/AppTheme';
@@ -14,35 +9,73 @@ import {
   sidebarCustomizations,
   formInputCustomizations,
 } from './theme/customizations';
-
-const router = createHashRouter([
+import LogInPage from './pages/LogInPage';
+import ProtectedRoute from './components/Auth/ProtectedRoute';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import AppLayout from './components/Layouts/AppLayout/AppLayout';
+export const routerConfig = [
   {
-    Component: DashboardLayout,
+    path: "/login",
+    element: <LogInPage />,
+  },
+  {
+    element: <AppLayout />,
     children: [
       {
-        path: '/employees',
-        Component: EmployeeList,
-      },
-      {
-        path: '/employees/:employeeId',
-        Component: EmployeeShow,
-      },
-      {
-        path: '/employees/new',
-        Component: EmployeeCreate,
-      },
-      {
-        path: '/employees/:employeeId/edit',
-        Component: EmployeeEdit,
-      },
-      // Fallback route for the example routes in dashboard sidebar items
-      {
-        path: '*',
-        Component: EmployeeList,
+        path: "/",
+        element: (
+          <Box sx={{ p: 3 }}>
+            <Typography variant="h4">Dashboard (All Authenticated Users)</Typography>
+          </Box>
+        ),
       },
     ],
   },
-]);
+  {
+    element: <ProtectedRoute allowedRoles={['admin']} />,
+    children: [
+      {
+        path: "/admin",
+        element: (
+          <Box sx={{ p: 3 }}>
+            <Typography variant="h4">Admin Page</Typography>
+            <Typography>Only accessible by Admin.</Typography>
+          </Box>
+        ),
+      },
+    ],
+  },
+  {
+    element: <ProtectedRoute allowedRoles={['supervisor']} />,
+    children: [
+      {
+        path: "/supervisor",
+        element: (
+          <Box sx={{ p: 3 }}>
+            <Typography variant="h4">Supervisor Page</Typography>
+            <Typography>Only accessible by Supervisor.</Typography>
+          </Box>
+        ),
+      },
+    ],
+  },
+  {
+    element: <ProtectedRoute allowedRoles={['staff']} />,
+    children: [
+      {
+        path: "/staff",
+        element: (
+          <Box sx={{ p: 3 }}>
+            <Typography variant="h4">Staff Page</Typography>
+            <Typography>Only accessible by Staff.</Typography>
+          </Box>
+        ),
+      },
+    ],
+  },
+]
+const router = createBrowserRouter(routerConfig);
 
 const themeComponents = {
   ...dataGridCustomizations,

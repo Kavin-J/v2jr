@@ -6,7 +6,10 @@ import Toolbar from '@mui/material/Toolbar';
 import { Outlet } from 'react-router';
 import AppHeader from './AppHeader';
 import AppSidebar from './AppSidebar';
-import SitemarkIcon from '../SitemarkIcon';
+import SitemarkIcon from '../../SitemarkIcon';
+import { useAppSelector } from '../../../app/hook';
+import { selectIsAuthenticated } from '../../../app/features/auth/auth.selectors';
+import { Navigate } from 'react-router';
 
 export default function AppLayout() {
   const theme = useTheme();
@@ -46,6 +49,12 @@ export default function AppLayout() {
 
   const layoutRef = React.useRef<HTMLDivElement>(null);
 
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
   return (
     <Box
       ref={layoutRef}
@@ -74,6 +83,8 @@ export default function AppLayout() {
           flexDirection: 'column',
           flex: 1,
           minWidth: 0,
+          overflow: 'hidden',
+          height: '100vh',
         }}
       >
         <Toolbar sx={{ displayPrint: 'none' }} />
@@ -84,6 +95,7 @@ export default function AppLayout() {
             flexDirection: 'column',
             flex: 1,
             overflow: 'auto',
+            height: '100%',
           }}
         >
           <Outlet />

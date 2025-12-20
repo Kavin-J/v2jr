@@ -66,4 +66,44 @@ describe('auth reducer', () => {
         const actual = authReducer(initialState, setLoading(true));
         expect(actual.loading).toBe(true);
     });
+
+    describe('loginCredentials', () => {
+        it('should handle pending', () => {
+            const action = { type: 'auth/loginCredentials/pending' };
+            const actual = authReducer(initialState, action);
+            expect(actual.loading).toBe(true);
+        });
+
+        it('should handle fulfilled', () => {
+            const user: User = {
+                id: '1',
+                name: 'Test User',
+                email: 'test@example.com',
+                role: 'staff',
+            };
+            const token = 'test-token';
+            const action = { type: 'auth/loginCredentials/fulfilled', payload: { user, token } };
+            const actual = authReducer(initialState, action);
+
+            expect(actual.loading).toBe(false);
+            expect(actual.user).toEqual(user);
+            expect(actual.token).toBe(token);
+            expect(actual.isAuthenticated).toBe(true);
+            expect(actual.error).toBeNull();
+            expect(localStorage.getItem('token')).toBe(token);
+            expect(localStorage.getItem('user')).toBe(JSON.stringify(user));
+        });
+
+        it('should handle rejected', () => {
+            const errorMsg = 'Login failed';
+            const action = { type: 'auth/loginCredentials/rejected', payload: errorMsg };
+            const actual = authReducer(initialState, action);
+
+            expect(actual.loading).toBe(false);
+            expect(actual.isAuthenticated).toBe(false);
+            expect(actual.token).toBeNull();
+            expect(actual.user).toBeNull();
+            expect(actual.error).toBe(errorMsg);
+        });
+    });
 });

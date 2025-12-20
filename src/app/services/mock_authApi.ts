@@ -1,13 +1,13 @@
 import { AuthApiClient } from "./authApiClient";
 import { LoginPayload } from "../features/auth/auth.thunks";
-import axios from "axios";
 import { User } from "../features/auth/auth.type";
 import { baseResponse } from "./types";
+import { mockLogin } from "../features/auth/__mock__/user";
 
-export const authApi: AuthApiClient = {
+export const mockAuthApi: AuthApiClient = {
 
     async login(payload: LoginPayload): Promise<baseResponse<{ user: User; token: string; }>> {
-        const response = await axios.post<object, baseResponse<{ user: User; token: string; }>>(import.meta.env.VITE_API_BASE_URL + '/auth/login', payload)
+        const response = await mockLogin(payload)
         return response
     }
 

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import Divider from '@mui/material/Divider';
 import type { } from '@mui/material/themeCssVarsAugmentation';
-import AppSidebarContext from '../../context/AppSidebarContext';
-import { getDrawerSxTransitionMixin } from '../../mixins';
+import AppSidebarContext from '../../../context/AppSidebarContext';
+import { getDrawerSxTransitionMixin } from '../../../mixins';
 
 export default function AppSidebarDividerItem() {
   const sidebarContext = React.useContext(AppSidebarContext);

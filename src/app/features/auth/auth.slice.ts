@@ -38,19 +38,26 @@ export const authSlice = createSlice({
 
     },
     extraReducers: (builder) => {
-        builder.addCase(loginCredentials.pending, (state) => {
-            state.loading = true;
-        })
-        builder.addCase(loginCredentials.fulfilled, (state, action) => {
-            state.loading = false;
-            state.user = action.payload.user;
-            state.token = action.payload.token;
-            state.isAuthenticated = true;
-        })
-        builder.addCase(loginCredentials.rejected, (state) => {
-            state.loading = false;
-            state.isAuthenticated = false;
-        })
+        builder
+            .addCase(loginCredentials.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(loginCredentials.fulfilled, (state, action: PayloadAction<{ user: User, token: string }>) => {
+                localStorage.setItem('token', action.payload.token);
+                localStorage.setItem('user', JSON.stringify(action.payload.user));
+                state.loading = false;
+                state.user = action.payload.user;
+                state.token = action.payload.token;
+                state.isAuthenticated = true;
+                state.error = null;
+            })
+            .addCase(loginCredentials.rejected, (state, action) => {
+                state.loading = false;
+                state.isAuthenticated = false;
+                state.token = null;
+                state.user = null;
+                state.error = action.payload || action.error.message || 'Login failed';
+            })
     },
 });
 

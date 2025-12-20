@@ -10,16 +10,23 @@ import PersonIcon from '@mui/icons-material/Person';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import DescriptionIcon from '@mui/icons-material/Description';
 import LayersIcon from '@mui/icons-material/Layers';
+import LogoutIcon from '@mui/icons-material/Logout';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import { useAppDispatch } from '../../../app/hook';
+import { logout } from '../../../app/features/auth/auth.slice';
 import { matchPath, useLocation } from 'react-router';
-import AppSidebarContext from '../../context/AppSidebarContext';
-import { DRAWER_WIDTH, MINI_DRAWER_WIDTH } from '../../constants';
+import AppSidebarContext from '../../../context/AppSidebarContext';
+import { DRAWER_WIDTH, MINI_DRAWER_WIDTH } from '../../../constants';
 import AppSidebarPageItem from './AppSidebarPageItem';
 import AppSidebarHeaderItem from './AppSidebarHeaderItem';
 import AppSidebarDividerItem from './AppSidebarDividerItem';
 import {
   getDrawerSxTransitionMixin,
   getDrawerWidthTransitionMixin,
-} from '../../mixins';
+} from '../../../mixins';
 
 export interface AppSidebarProps {
   expanded?: boolean;
@@ -37,6 +44,11 @@ export default function AppSidebar({
   const theme = useTheme();
 
   const { pathname } = useLocation();
+  const dispatch = useAppDispatch();
+
+  const handleLogout = React.useCallback(() => {
+    dispatch(logout());
+  }, [dispatch]);
 
   const [expandedItemIds, setExpandedItemIds] = React.useState<string[]>([]);
 
@@ -184,6 +196,43 @@ export default function AppSidebar({
               href="/integrations"
               selected={!!matchPath('/integrations', pathname)}
             />
+          </List>
+          <List
+            dense
+            sx={{
+              padding: mini ? 0 : 0.5,
+              width: mini ? MINI_DRAWER_WIDTH : 'auto',
+            }}
+          >
+            <ListItem
+              disablePadding
+              sx={{
+                display: 'block',
+                py: 0,
+                px: 1,
+                overflowX: 'hidden',
+              }}
+            >
+              <ListItemButton
+                data-testid="logout-button"
+                onClick={handleLogout}
+                sx={{
+                  height: mini ? 50 : 'auto',
+                  justifyContent: mini ? 'center' : 'initial',
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: mini ? 'auto' : 3,
+                    justifyContent: 'center',
+                  }}
+                >
+                  <LogoutIcon />
+                </ListItemIcon>
+                {!mini && <ListItemText primary="Logout" />}
+              </ListItemButton>
+            </ListItem>
           </List>
         </Box>
       </React.Fragment>

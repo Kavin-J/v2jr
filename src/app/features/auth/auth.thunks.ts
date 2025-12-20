@@ -6,13 +6,13 @@ export interface LoginPayload {
     password: string;
 }
 
-export const loginCredentials = createAsyncThunk<{ user: User; token: string }, LoginPayload, { extra: { api: ApiClient } }>(
-    'auth/login',
+export const loginCredentials = createAsyncThunk<{ user: User; token: string }, LoginPayload, { extra: { api: ApiClient }, rejectValue: string }>(
+    'auth/loginCredentials',
     async (payload, { extra, rejectWithValue }) => {
         try {
             const response = await extra.api.auth.login(payload)
-            if (!response.success) {
-                return rejectWithValue(response.message);
+            if (!response.success || !response.data) {
+                throw new Error(response.message);
             }
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('user', JSON.stringify(response.data.user));
