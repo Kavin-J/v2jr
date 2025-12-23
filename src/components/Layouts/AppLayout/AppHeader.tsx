@@ -11,6 +11,7 @@ import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import Stack from '@mui/material/Stack';
 import { Link } from 'react-router';
 import ThemeSwitcher from '../../ThemeSwitcher';
+import LanguageSwitcher from '../../LanguageSwitcher';
 
 const AppBar = styled(MuiAppBar)(({ theme }) => ({
   borderWidth: 0,
@@ -116,6 +117,7 @@ export default function AppHeader({
             sx={{ marginLeft: 'auto' }}
           >
             <Stack direction="row" alignItems="center">
+              <LanguageSwitcher />
               <ThemeSwitcher />
             </Stack>
           </Stack>

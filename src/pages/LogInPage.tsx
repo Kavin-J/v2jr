@@ -6,11 +6,14 @@ import Content from '../components/Login/Content';
 import ThemeSwitcher from '../components/ThemeSwitcher';
 import Box from '@mui/material/Box';
 import { useSelector } from 'react-redux';
-import { selectIsAuthenticated } from '../app/features/auth/auth.selectors';
+import { selectIsAuthenticated, selectAuthLoading } from '../app/features/auth/auth.selectors';
 import { Navigate } from 'react-router';
+import LanguageSwitcher from '../components/LanguageSwitcher';
+import LoadingScreen from '../components/LoadingScreen';
 
 export default function LogInPage(props: { disableCustomTheme?: boolean }) {
     const isAuthenticated = useSelector(selectIsAuthenticated);
+    const isLoading = useSelector(selectAuthLoading);
 
     if (isAuthenticated) {
         return <Navigate to="/" />;
@@ -19,8 +22,12 @@ export default function LogInPage(props: { disableCustomTheme?: boolean }) {
     return (
         <AppTheme {...props}>
             <CssBaseline enableColorScheme />
+            <LoadingScreen open={isLoading} />
             <Box sx={{ position: 'fixed', top: '1rem', right: '1rem' }}>
-                <ThemeSwitcher />
+                <Stack direction="row" spacing={1}>
+                    <ThemeSwitcher />
+                    <LanguageSwitcher />
+                </Stack>
             </Box>
             <Stack
                 direction="column"

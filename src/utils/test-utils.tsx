@@ -1,11 +1,20 @@
 import React, { PropsWithChildren } from 'react'
 import { render } from '@testing-library/react'
 import type { RenderOptions } from '@testing-library/react'
-import { configureStore } from '@reduxjs/toolkit'
 import { Provider } from 'react-redux'
 
 import type { AppStore, RootState } from '../app/store'
 import { setupStore } from '../app/store'
+import CssBaseline from '@mui/material/CssBaseline';
+import NotificationsProvider from '../hooks/useNotifications/NotificationsProvider';
+import DialogsProvider from '../hooks/useDialogs/DialogsProvider';
+import AppTheme from '../theme/AppTheme';
+import {
+    dataGridCustomizations,
+    datePickersCustomizations,
+    sidebarCustomizations,
+    formInputCustomizations,
+} from '../theme/customizations';
 // As a basic setup, import your same slice reducers
 // import userReducer from '../features/users/userSlice'
 
@@ -14,6 +23,7 @@ import { setupStore } from '../app/store'
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
     preloadedState?: Partial<RootState>
     store?: AppStore
+
 }
 
 export function renderWithProviders(
@@ -27,8 +37,25 @@ export function renderWithProviders(
         ...renderOptions
     } = extendedRenderOptions
 
+    const themeComponents = {
+        ...dataGridCustomizations,
+        ...datePickersCustomizations,
+        ...sidebarCustomizations,
+        ...formInputCustomizations,
+    };
     const Wrapper = ({ children }: PropsWithChildren) => (
-        <Provider store={store}>{children}</Provider>
+
+        <Provider store={store}>
+            <AppTheme themeComponents={themeComponents}>
+                <CssBaseline enableColorScheme />
+                <NotificationsProvider>
+                    <DialogsProvider>
+                        {children}
+                    </DialogsProvider>
+                </NotificationsProvider>
+            </AppTheme>
+
+        </Provider>
     )
 
     // Return an object with the store and all of RTL's query functions

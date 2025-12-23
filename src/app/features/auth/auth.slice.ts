@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { User } from './auth.type';
 import { AuthState } from './auth.type';
 import { loginCredentials } from './auth.thunks';
+import { LanguageType } from './auth.type';
 
 const initialState: AuthState = {
     user: null,
@@ -9,18 +10,20 @@ const initialState: AuthState = {
     token: null,
     error: null,
     loading: false,
+    language: 'th',
 };
 
 export const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        login: (state, action: PayloadAction<{ user: User, token: string }>) => {
+        login: (state, action: PayloadAction<{ user: User, token: string, language: LanguageType }>) => {
             localStorage.setItem('token', action.payload.token);
             localStorage.setItem('user', JSON.stringify(action.payload.user));
             state.user = action.payload.user;
             state.isAuthenticated = true;
             state.token = action.payload.token;
+            state.language = action.payload.language;
         },
         logout: (state) => {
             localStorage.removeItem('token');
@@ -28,6 +31,9 @@ export const authSlice = createSlice({
             state.user = null;
             state.isAuthenticated = false;
             state.token = null;
+        },
+        setLanguage: (state, action: PayloadAction<LanguageType>) => {
+            state.language = action.payload;
         },
         setError: (state, action: PayloadAction<string>) => {
             state.error = action.payload;
@@ -61,6 +67,6 @@ export const authSlice = createSlice({
     },
 });
 
-export const { login, logout, setError, setLoading } = authSlice.actions;
+export const { login, logout, setError, setLoading, setLanguage } = authSlice.actions;
 
 export default authSlice.reducer;

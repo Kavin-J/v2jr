@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import authReducer, { login, logout, setError, setLoading } from './auth.slice';
+import authReducer, { login, logout, setError, setLoading, setLanguage } from './auth.slice';
 import { AuthState, User } from './auth.type';
+
 
 describe('auth reducer', () => {
     const initialState: AuthState = {
@@ -10,6 +11,7 @@ describe('auth reducer', () => {
         isAuthenticated: false,
         error: null,
         loading: false,
+        language: 'th',
     };
 
     it('should return the initial state', () => {
@@ -19,6 +21,7 @@ describe('auth reducer', () => {
             error: null,
             loading: false,
             token: null,
+            language: 'th',
         });
     });
 
@@ -29,7 +32,7 @@ describe('auth reducer', () => {
             email: 'test@example.com',
             role: 'staff',
         };
-        const actual = authReducer(initialState, login({ user, token: 'test-token' }));
+        const actual = authReducer(initialState, login({ user, token: 'test-token', language: 'th' }));
         expect(actual.user).toEqual(user);
         expect(actual.isAuthenticated).toBe(true);
         expect(actual.loading).toBe(false);
@@ -49,11 +52,18 @@ describe('auth reducer', () => {
             },
             isAuthenticated: true,
             token: 'test-token',
+            language: 'th',
         };
         const actual = authReducer(loggedInState, logout());
         expect(actual.user).toBeNull();
         expect(actual.isAuthenticated).toBe(false);
         expect(actual.token).toBeNull();
+        expect(actual.language).toBe('th');
+    });
+
+    it('should handle setLanguage', () => {
+        const actual = authReducer(initialState, setLanguage('en'));
+        expect(actual.language).toBe('en');
     });
 
     it('should handle setError', () => {

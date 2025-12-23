@@ -14,7 +14,7 @@ import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import PersonIcon from '@mui/icons-material/Person';
 import { useAppDispatch, useAppSelector } from '../../app/hook';
 import { loginCredentials } from '../../app/features/auth/auth.thunks';
-import { selectAuthError, selectAuthLoading } from '../../app/features/auth/auth.selectors';
+import { selectAuthError, selectAuthLanguage } from '../../app/features/auth/auth.selectors';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -36,18 +36,24 @@ const Card = styled(MuiCard)(({ theme }) => ({
 
 export default function SignInCard() {
   const dispatch = useAppDispatch();
-  const isLoading = useAppSelector(selectAuthLoading)
+
+  const language = useAppSelector(selectAuthLanguage)
   const error = useAppSelector(selectAuthError)
 
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
-
-
-
-
   const [responseError, setResponseError] = React.useState('');
+  const signInText = language === 'en' ? 'Sign In' : 'เข้าสู่ระบบ';
+  const emailLabel = language === 'en' ? 'Email' : 'อีเมล';
+  const passwordLabel = language === 'en' ? 'Password' : 'รหัสผ่าน';
+  const placeholderEmail = language === 'en' ? 'your@email.com' : 'อีเมลของคุณ';
+  const placeholderPassword = language === 'en' ? '••••••' : 'รหัสผ่านของคุณ';
+  const errorText = language === 'en' ? 'Invalid email or password' : 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
+  const emailErrorText = language === 'en' ? 'Please enter a valid email address' : 'กรุณากรอกอีเมลให้ถูกต้อง';
+  const passwordErrorText = language === 'en' ? 'Password must be at least 6 characters long' : 'รหัสผ่านต้องมีความยาวไม่ต่ำกว่า 6 ตัวอักษร';
+
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     if (emailError || passwordError) {
@@ -73,7 +79,7 @@ export default function SignInCard() {
 
     if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
       setEmailError(true);
-      setEmailErrorMessage('กรุณากรอกอีเมลให้ถูกต้อง');
+      setEmailErrorMessage(emailErrorText);
       isValid = false;
     } else {
       setEmailError(false);
@@ -82,7 +88,7 @@ export default function SignInCard() {
 
     if (!password.value || password.value.length < 6) {
       setPasswordError(true);
-      setPasswordErrorMessage('รหัสผ่านต้องมีความยาวไม่ต่ำกว่า 6 ตัวอักษร');
+      setPasswordErrorMessage(passwordErrorText);
       isValid = false;
     } else {
       setPasswordError(false);
@@ -104,7 +110,7 @@ export default function SignInCard() {
   React.useEffect(
     () => {
       if (error) {
-        setResponseError(error)
+        setResponseError(errorText)
       }
     },
     [error]
@@ -119,7 +125,7 @@ export default function SignInCard() {
         variant="h4"
         sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
       >
-        เข้าสู่ระบบ
+        {signInText}
       </Typography>
       <Box
         component="form"
@@ -128,14 +134,14 @@ export default function SignInCard() {
         sx={{ display: 'flex', flexDirection: 'column', width: '100%', gap: 2 }}
       >
         <FormControl>
-          <FormLabel htmlFor="email">อีเมล</FormLabel>
+          <FormLabel htmlFor="email">{emailLabel}</FormLabel>
           <TextField
             error={emailError}
             helperText={emailErrorMessage}
             id="email"
             type="email"
             name="email"
-            placeholder="your@email.com"
+            placeholder={placeholderEmail}
             autoComplete="email"
             autoFocus
             required
@@ -146,13 +152,13 @@ export default function SignInCard() {
         </FormControl>
         <FormControl>
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <FormLabel htmlFor="password">รหัสผ่าน</FormLabel>
+            <FormLabel htmlFor="password">{passwordLabel}</FormLabel>
           </Box>
           <TextField
             error={passwordError}
             helperText={passwordErrorMessage}
             name="password"
-            placeholder="••••••"
+            placeholder={placeholderPassword}
             type="password"
             id="password"
             autoComplete="off"
@@ -167,7 +173,7 @@ export default function SignInCard() {
           <Typography variant="caption" color="error">{responseError}</Typography>
         </Box>
         <Button role="button" name="signIn" type="submit" fullWidth variant="contained" onClick={validateInputs}>
-          Sign In
+          {signInText}
         </Button>
 
       </Box>
@@ -182,7 +188,7 @@ export default function SignInCard() {
               onClick={handleAdminLogin}
               startIcon={<SecurityIcon />}
             >
-              เข้าสู่ระบบด้วย Admin
+              {language === 'en' ? 'Sign In with Admin' : 'เข้าสู่ระบบด้วย Admin'}
             </Button>
             <Button
               fullWidth
@@ -190,7 +196,7 @@ export default function SignInCard() {
               onClick={handleSupervisorLogin}
               startIcon={<SupervisorAccountIcon />}
             >
-              เข้าสู่ระบบด้วย Supervisor
+              {language === 'en' ? 'Sign In with Supervisor' : 'เข้าสู่ระบบด้วย Supervisor'}
             </Button>
             <Button
               fullWidth
@@ -198,7 +204,7 @@ export default function SignInCard() {
               onClick={handleStaffLogin}
               startIcon={<PersonIcon />}
             >
-              เข้าสู่ระบบด้วย Staff
+              {language === 'en' ? 'Sign In with Staff' : 'เข้าสู่ระบบด้วย Staff'}
             </Button>
           </Box>
         </React.Fragment>

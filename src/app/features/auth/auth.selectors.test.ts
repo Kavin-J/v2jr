@@ -7,6 +7,7 @@ import {
     selectAuthToken,
     selectAuthError,
     selectAuthLoading,
+    selectAuthLanguage,
 } from './auth.selectors';
 import { RootState } from '../../store';
 
@@ -25,6 +26,7 @@ describe('auth selectors', () => {
             isAuthenticated: true,
             error: 'Some error',
             loading: true,
+            language: 'th',
         },
     } as RootState;
 
@@ -64,5 +66,9 @@ describe('auth selectors', () => {
             },
         } as RootState;
         expect(selectAuthRole(stateWithNoUser)).toBeUndefined();
+    });
+
+    it('should select the language', () => {
+        expect(selectAuthLanguage(mockState)).toBe('th');
     });
 });

@@ -1,6 +1,7 @@
 
 
 export type RoleType = 'admin' | 'supervisor' | 'staff';
+export type LanguageType = 'th' | 'en';
 
 export interface User {
     id: string;
@@ -14,6 +15,7 @@ export interface AuthState {
     user: User | null;
     token: string | null;
     isAuthenticated: boolean;
+    language: LanguageType;
     error: string | null;
     loading: boolean;
 }

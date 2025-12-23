@@ -21,7 +21,8 @@ describe('loginCredentials', () => {
                     success: true,
                     data: {
                         user: mockUser,
-                        token: 'admin_test_token123'
+                        token: 'admin_test_token123',
+                        language: 'th'
                     },
                     message: 'Login successful',
                     status: 200
@@ -33,7 +34,7 @@ describe('loginCredentials', () => {
         const result = await store.dispatch(loginCredentials({ email: 'test_admin@example.com', password: 'test123' }));
 
         expect(mockApiClient.auth.login).toHaveBeenCalledWith({ email: 'test_admin@example.com', password: 'test123' });
-        expect(result.payload).toEqual({ user: mockUser, token: 'admin_test_token123' });
+        expect(result.payload).toEqual({ user: mockUser, token: 'admin_test_token123', language: 'th' });
         expect(result.meta.requestStatus).toBe('fulfilled');
     });
 

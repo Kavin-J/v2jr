@@ -6,7 +6,7 @@ import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import Toolbar from '@mui/material/Toolbar';
 import type { } from '@mui/material/themeCssVarsAugmentation';
-import PersonIcon from '@mui/icons-material/Person';
+import HomeIcon from '@mui/icons-material/Home';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import DescriptionIcon from '@mui/icons-material/Description';
 import LayersIcon from '@mui/icons-material/Layers';
@@ -15,7 +15,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { useAppDispatch } from '../../../app/hook';
+import { useAppDispatch, useAppSelector } from '../../../app/hook';
 import { logout } from '../../../app/features/auth/auth.slice';
 import { matchPath, useLocation } from 'react-router';
 import AppSidebarContext from '../../../context/AppSidebarContext';
@@ -27,6 +27,7 @@ import {
   getDrawerSxTransitionMixin,
   getDrawerWidthTransitionMixin,
 } from '../../../mixins';
+import { selectAuthRole } from '../../../app/features/auth/auth.selectors';
 
 export interface AppSidebarProps {
   expanded?: boolean;
@@ -42,7 +43,7 @@ export default function AppSidebar({
   container,
 }: AppSidebarProps) {
   const theme = useTheme();
-
+  const role = useAppSelector(selectAuthRole)
   const { pathname } = useLocation();
   const dispatch = useAppDispatch();
 
@@ -144,57 +145,57 @@ export default function AppSidebar({
               width: mini ? MINI_DRAWER_WIDTH : 'auto',
             }}
           >
-            <AppSidebarHeaderItem>Main items</AppSidebarHeaderItem>
+            <AppSidebarHeaderItem>Menu</AppSidebarHeaderItem>
             <AppSidebarPageItem
-              id="employees"
-              title="Employees"
-              icon={<PersonIcon />}
-              href="/employees"
-              selected={!!matchPath('/employees/*', pathname) || pathname === '/'}
+              id="dashboard"
+              title="Dashboard"
+              icon={<HomeIcon />}
+              href="/"
+              selected={!!matchPath('/', pathname)}
             />
             <AppSidebarDividerItem />
-            <AppSidebarHeaderItem>Example items</AppSidebarHeaderItem>
+            <AppSidebarHeaderItem>{role === "admin" ? "Admin" : role === "supervisor" ? "Supervisor" : "Staff"}</AppSidebarHeaderItem>
+            <AppSidebarPageItem
+              id={role === "admin" ? "admin" : role === "supervisor" ? "supervisor" : "staff"}
+              title={role === "admin" ? "Admin" : role === "supervisor" ? "Supervisor" : "Staff"}
+              icon={<BarChartIcon />}
+              href={role === "admin" ? "/admin" : role === "supervisor" ? "/supervisor" : "/staff"}
+              selected={!!matchPath('/' + role, pathname)}
+            // defaultExpanded={!!matchPath('/' + role, pathname)}
+            // expanded={expandedItemIds.includes(role)}
+            // nestedNavigation={
+            //   <List
+            //     dense
+            //     sx={{
+            //       padding: 0,
+            //       my: 1,
+            //       pl: mini ? 0 : 1,
+            //       minWidth: 240,
+            //     }}
+            //   >
+            //     <AppSidebarPageItem
+            //       id="sales"
+            //       title="Sales"
+            //       icon={<DescriptionIcon />}
+            //       href="/reports/sales"
+            //       selected={!!matchPath('/reports/sales', pathname)}
+            //     />
+            //     <AppSidebarPageItem
+            //       id="traffic"
+            //       title="Traffic"
+            //       icon={<DescriptionIcon />}
+            //       href="/reports/traffic"
+            //       selected={!!matchPath('/reports/traffic', pathname)}
+            //     />
+            //   </List>
+            // }
+            />
             <AppSidebarPageItem
               id="reports"
               title="Reports"
-              icon={<BarChartIcon />}
+              icon={<LayersIcon />}
               href="/reports"
               selected={!!matchPath('/reports', pathname)}
-              defaultExpanded={!!matchPath('/reports', pathname)}
-              expanded={expandedItemIds.includes('reports')}
-              nestedNavigation={
-                <List
-                  dense
-                  sx={{
-                    padding: 0,
-                    my: 1,
-                    pl: mini ? 0 : 1,
-                    minWidth: 240,
-                  }}
-                >
-                  <AppSidebarPageItem
-                    id="sales"
-                    title="Sales"
-                    icon={<DescriptionIcon />}
-                    href="/reports/sales"
-                    selected={!!matchPath('/reports/sales', pathname)}
-                  />
-                  <AppSidebarPageItem
-                    id="traffic"
-                    title="Traffic"
-                    icon={<DescriptionIcon />}
-                    href="/reports/traffic"
-                    selected={!!matchPath('/reports/traffic', pathname)}
-                  />
-                </List>
-              }
-            />
-            <AppSidebarPageItem
-              id="integrations"
-              title="Integrations"
-              icon={<LayersIcon />}
-              href="/integrations"
-              selected={!!matchPath('/integrations', pathname)}
             />
           </List>
           <List
@@ -215,6 +216,8 @@ export default function AppSidebar({
             >
               <ListItemButton
                 data-testid="logout-button"
+                aria-label="Logout"
+                aria-controls="logout-menu"
                 onClick={handleLogout}
                 sx={{
                   height: mini ? 50 : 'auto',
