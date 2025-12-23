@@ -1,12 +1,13 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { User } from "./auth.type";
+import { User, LanguageType } from "./auth.type";
 import { ApiClient } from "../../services/apiClient";
+
 export interface LoginPayload {
     email: string;
     password: string;
 }
 
-export const loginCredentials = createAsyncThunk<{ user: User; token: string }, LoginPayload, { extra: { api: ApiClient }, rejectValue: string }>(
+export const loginCredentials = createAsyncThunk<{ user: User; token: string, language: LanguageType, permission: string[] }, LoginPayload, { extra: { api: ApiClient }, rejectValue: string }>(
     'auth/loginCredentials',
     async (payload, { extra, rejectWithValue }) => {
         try {
@@ -14,8 +15,6 @@ export const loginCredentials = createAsyncThunk<{ user: User; token: string }, 
             if (!response.success || !response.data) {
                 throw new Error(response.message);
             }
-            localStorage.setItem('token', response.data.token);
-            localStorage.setItem('user', JSON.stringify(response.data.user));
             return response.data;
         } catch (error) {
             if (error instanceof Error) {

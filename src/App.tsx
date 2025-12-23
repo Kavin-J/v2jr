@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router';
 import NotificationsProvider from './hooks/useNotifications/NotificationsProvider';
 import DialogsProvider from './hooks/useDialogs/DialogsProvider';
 import AppTheme from './theme/AppTheme';
+import PermissionProvider from './hooks/usePermission/PermissionProvider';
 import {
   dataGridCustomizations,
   datePickersCustomizations,
@@ -25,11 +26,13 @@ export default function App(props: { disableCustomTheme?: boolean }) {
   return (
     <AppTheme {...props} themeComponents={themeComponents}>
       <CssBaseline enableColorScheme />
-      <NotificationsProvider>
-        <DialogsProvider>
-          <RouterProvider router={router} />
-        </DialogsProvider>
-      </NotificationsProvider>
+      <PermissionProvider>
+        <NotificationsProvider>
+          <DialogsProvider>
+            <RouterProvider router={router} />
+          </DialogsProvider>
+        </NotificationsProvider>
+      </PermissionProvider>
     </AppTheme>
   );
 }

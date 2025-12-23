@@ -8,4 +8,12 @@ const AppSidebarContext = React.createContext<{
   hasDrawerTransitions: boolean;
 } | null>(null);
 
+export type AppSidebarContextType = {
+  onPageItemClick: (id: string, hasNestedNavigation: boolean) => void;
+  mini: boolean;
+  fullyExpanded: boolean;
+  fullyCollapsed: boolean;
+  hasDrawerTransitions: boolean;
+}
 export default AppSidebarContext;
+

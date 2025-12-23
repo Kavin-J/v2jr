@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import AppLayout from '../components/Layouts/AppLayout/AppLayout';
 import Dashboard from '../pages/Dashboard';
+import ProfilePage from '../pages/ProfilePage';
 
 export const routes: RouteObject[] = [
   {
@@ -60,6 +61,10 @@ export const routes: RouteObject[] = [
             ),
           },
         ],
+      },
+      {
+        path: "/profile",
+        element: <ProfilePage />,
       },
     ],
   },

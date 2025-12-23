@@ -10,13 +10,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import DescriptionIcon from '@mui/icons-material/Description';
 import LayersIcon from '@mui/icons-material/Layers';
-import LogoutIcon from '@mui/icons-material/Logout';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import { useAppDispatch, useAppSelector } from '../../../app/hook';
-import { logout } from '../../../app/features/auth/auth.slice';
+import { useAppSelector } from '../../../app/hook';
 import { matchPath, useLocation } from 'react-router';
 import AppSidebarContext from '../../../context/AppSidebarContext';
 import { DRAWER_WIDTH, MINI_DRAWER_WIDTH } from '../../../constants';
@@ -28,6 +22,7 @@ import {
   getDrawerWidthTransitionMixin,
 } from '../../../mixins';
 import { selectAuthRole } from '../../../app/features/auth/auth.selectors';
+import AppSidebarProfile from './AppSidebarProfile';
 
 export interface AppSidebarProps {
   expanded?: boolean;
@@ -45,11 +40,6 @@ export default function AppSidebar({
   const theme = useTheme();
   const role = useAppSelector(selectAuthRole)
   const { pathname } = useLocation();
-  const dispatch = useAppDispatch();
-
-  const handleLogout = React.useCallback(() => {
-    dispatch(logout());
-  }, [dispatch]);
 
   const [expandedItemIds, setExpandedItemIds] = React.useState<string[]>([]);
 
@@ -198,45 +188,7 @@ export default function AppSidebar({
               selected={!!matchPath('/reports', pathname)}
             />
           </List>
-          <List
-            dense
-            sx={{
-              padding: mini ? 0 : 0.5,
-              width: mini ? MINI_DRAWER_WIDTH : 'auto',
-            }}
-          >
-            <ListItem
-              disablePadding
-              sx={{
-                display: 'block',
-                py: 0,
-                px: 1,
-                overflowX: 'hidden',
-              }}
-            >
-              <ListItemButton
-                data-testid="logout-button"
-                aria-label="Logout"
-                aria-controls="logout-menu"
-                onClick={handleLogout}
-                sx={{
-                  height: mini ? 50 : 'auto',
-                  justifyContent: mini ? 'center' : 'initial',
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: mini ? 'auto' : 3,
-                    justifyContent: 'center',
-                  }}
-                >
-                  <LogoutIcon />
-                </ListItemIcon>
-                {!mini && <ListItemText primary="Logout" />}
-              </ListItemButton>
-            </ListItem>
-          </List>
+          <AppSidebarProfile mini={mini} />
         </Box>
       </React.Fragment>
     ),

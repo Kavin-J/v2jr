@@ -2,7 +2,7 @@ import { loginCredentials } from './auth.thunks';
 import { createTestStore } from '../../createTestStore';
 import authReducer from './auth.slice';
 import { ApiClient } from '../../services/apiClient';
-import { User } from './auth.type';
+import { LanguageType, User } from './auth.type';
 import { vi, describe, it, expect } from 'vitest';
 
 describe('loginCredentials', () => {
@@ -14,6 +14,8 @@ describe('loginCredentials', () => {
             role: 'admin',
             avatar: 'avatar_url',
         };
+        const language: LanguageType = 'th';
+        const permission: string[] = ['*'];
 
         const mockApiClient: ApiClient = {
             auth: {
@@ -22,7 +24,8 @@ describe('loginCredentials', () => {
                     data: {
                         user: mockUser,
                         token: 'admin_test_token123',
-                        language: 'th'
+                        language,
+                        permission
                     },
                     message: 'Login successful',
                     status: 200
@@ -34,7 +37,7 @@ describe('loginCredentials', () => {
         const result = await store.dispatch(loginCredentials({ email: 'test_admin@example.com', password: 'test123' }));
 
         expect(mockApiClient.auth.login).toHaveBeenCalledWith({ email: 'test_admin@example.com', password: 'test123' });
-        expect(result.payload).toEqual({ user: mockUser, token: 'admin_test_token123', language: 'th' });
+        expect(result.payload).toEqual({ user: mockUser, token: 'admin_test_token123', language: 'th', permission: ['*'] });
         expect(result.meta.requestStatus).toBe('fulfilled');
     });
 

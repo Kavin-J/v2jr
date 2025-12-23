@@ -8,6 +8,7 @@ const initialState: AuthState = {
     user: null,
     isAuthenticated: false,
     token: null,
+    permission: [],
     error: null,
     loading: false,
     language: 'th',
@@ -17,20 +18,18 @@ export const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        login: (state, action: PayloadAction<{ user: User, token: string, language: LanguageType }>) => {
-            localStorage.setItem('token', action.payload.token);
-            localStorage.setItem('user', JSON.stringify(action.payload.user));
+        login: (state, action: PayloadAction<{ user: User, token: string, language: LanguageType, permission: string[] }>) => {
             state.user = action.payload.user;
             state.isAuthenticated = true;
             state.token = action.payload.token;
+            state.permission = action.payload.permission;
             state.language = action.payload.language;
         },
         logout: (state) => {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
             state.user = null;
             state.isAuthenticated = false;
             state.token = null;
+            state.permission = [];
         },
         setLanguage: (state, action: PayloadAction<LanguageType>) => {
             state.language = action.payload;
@@ -41,6 +40,9 @@ export const authSlice = createSlice({
         setLoading: (state, action: PayloadAction<boolean>) => {
             state.loading = action.payload;
         },
+        setPermission: (state, action: PayloadAction<string[]>) => {
+            state.permission = action.payload;
+        },
 
     },
     extraReducers: (builder) => {
@@ -48,13 +50,13 @@ export const authSlice = createSlice({
             .addCase(loginCredentials.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(loginCredentials.fulfilled, (state, action: PayloadAction<{ user: User, token: string }>) => {
-                localStorage.setItem('token', action.payload.token);
-                localStorage.setItem('user', JSON.stringify(action.payload.user));
+            .addCase(loginCredentials.fulfilled, (state, action: PayloadAction<{ user: User, token: string, language: LanguageType, permission: string[] }>) => {
                 state.loading = false;
                 state.user = action.payload.user;
                 state.token = action.payload.token;
                 state.isAuthenticated = true;
+                state.language = action.payload.language;
+                state.permission = action.payload.permission;
                 state.error = null;
             })
             .addCase(loginCredentials.rejected, (state, action) => {
@@ -67,6 +69,6 @@ export const authSlice = createSlice({
     },
 });
 
-export const { login, logout, setError, setLoading, setLanguage } = authSlice.actions;
+export const { login, logout, setError, setLoading, setLanguage, setPermission } = authSlice.actions;
 
 export default authSlice.reducer;
