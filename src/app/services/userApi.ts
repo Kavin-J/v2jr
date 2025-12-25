@@ -6,9 +6,10 @@ export const userApi = api.injectEndpoints({
     endpoints: (builder) => ({
         getUsers: builder.query<User[], void>({
             query: () => '/users',
+            transformResponse: (response: User[]) => response,
+            transformErrorResponse: (response) => response.data,
         }),
     }),
-    overrideExisting: false,
 })
 
 export const { useGetUsersQuery } = userApi

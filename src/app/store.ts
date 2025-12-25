@@ -84,7 +84,7 @@ const preloadedState = {
 }
 
 export const store = setupStore(preloadedState, {
-    api: mockApiClient, // 👈 ใช้ mockApi แทน api
+    api: import.meta.env., // 👈 ใช้ mockApi แทน api
 })
 
 /* ----------------------------------
