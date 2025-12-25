@@ -1,7 +1,6 @@
 
 
 import usePermission from './usePermisstion';
-import PermissionProvider from './PermissionProvider';
 import { renderWithProviders } from '../../utils/test-utils';
 
 import { vi } from 'vitest';
@@ -48,15 +47,13 @@ describe('usePermission Hook', () => {
         const preloadedState = {
             auth: {
                 user: { id: '1', role: 'admin' },
-                permission: ['user.read'],
+                permissions: ['user.read'],
                 isAuthenticated: true
             }
         } as any;
 
         renderWithProviders(
-            <PermissionProvider>
-                <TestComponent onRender={(val) => hookResult = val} />
-            </PermissionProvider>,
+            <TestComponent onRender={(val) => hookResult = val} />,
             { preloadedState }
         );
 
@@ -68,13 +65,11 @@ describe('usePermission Hook', () => {
         it('should return true if user has the role', () => {
             let hookResult: any;
             const preloadedState = {
-                auth: { user: { role: 'admin' }, permission: [], isAuthenticated: true }
+                auth: { user: { role: 'admin' }, permissions: [], isAuthenticated: true }
             } as any;
 
             renderWithProviders(
-                <PermissionProvider>
-                    <TestComponent onRender={(val) => hookResult = val} />
-                </PermissionProvider>,
+                <TestComponent onRender={(val) => hookResult = val} />,
                 { preloadedState }
             );
 
@@ -84,13 +79,11 @@ describe('usePermission Hook', () => {
         it('should return false if user does not have the role', () => {
             let hookResult: any;
             const preloadedState = {
-                auth: { user: { role: 'staff' }, permission: [], isAuthenticated: true }
+                auth: { user: { role: 'staff' }, permissions: [], isAuthenticated: true }
             } as any;
 
             renderWithProviders(
-                <PermissionProvider>
-                    <TestComponent onRender={(val) => hookResult = val} />
-                </PermissionProvider>,
+                <TestComponent onRender={(val) => hookResult = val} />,
                 { preloadedState }
             );
 
@@ -102,13 +95,11 @@ describe('usePermission Hook', () => {
         it('should return true for exact permission match', () => {
             let hookResult: any;
             const preloadedState = {
-                auth: { user: { role: 'staff' }, permission: ['user.read'], isAuthenticated: true }
+                auth: { user: { role: 'staff' }, permissions: ['user.read'], isAuthenticated: true }
             } as any;
 
             renderWithProviders(
-                <PermissionProvider>
-                    <TestComponent onRender={(val) => hookResult = val} />
-                </PermissionProvider>,
+                <TestComponent onRender={(val) => hookResult = val} />,
                 { preloadedState }
             );
 
@@ -119,13 +110,11 @@ describe('usePermission Hook', () => {
         it('should return true if user has wildcard (*)', () => {
             let hookResult: any;
             const preloadedState = {
-                auth: { user: { role: 'admin' }, permission: ['*'], isAuthenticated: true }
+                auth: { user: { role: 'admin' }, permissions: ['*'], isAuthenticated: true }
             } as any;
 
             renderWithProviders(
-                <PermissionProvider>
-                    <TestComponent onRender={(val) => hookResult = val} />
-                </PermissionProvider>,
+                <TestComponent onRender={(val) => hookResult = val} />,
                 { preloadedState }
             );
 
@@ -135,13 +124,11 @@ describe('usePermission Hook', () => {
         it('should return true if user has wildcard resource (user.*)', () => {
             let hookResult: any;
             const preloadedState = {
-                auth: { user: { role: 'staff' }, permission: ['user.*'], isAuthenticated: true }
+                auth: { user: { role: 'staff' }, permissions: ['user.*'], isAuthenticated: true }
             } as any;
 
             renderWithProviders(
-                <PermissionProvider>
-                    <TestComponent onRender={(val) => hookResult = val} />
-                </PermissionProvider>,
+                <TestComponent onRender={(val) => hookResult = val} />,
                 { preloadedState }
             );
 
@@ -155,13 +142,11 @@ describe('usePermission Hook', () => {
         it('should correctly check specific actions', () => {
             let hookResult: any;
             const preloadedState = {
-                auth: { user: { role: 'staff' }, permission: ['user.read', 'product.write', 'order.*'], isAuthenticated: true }
+                auth: { user: { role: 'staff' }, permissions: ['user.read', 'product.write', 'order.*'], isAuthenticated: true }
             } as any;
 
             renderWithProviders(
-                <PermissionProvider>
-                    <TestComponent onRender={(val) => hookResult = val} />
-                </PermissionProvider>,
+                <TestComponent onRender={(val) => hookResult = val} />,
                 { preloadedState }
             );
 

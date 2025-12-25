@@ -1,38 +1,57 @@
 // src/app/store.ts
 import { configureStore } from '@reduxjs/toolkit'
 import rootReducer from './rootReducer'
-import type { AuthState } from './features/auth/auth.type'
-import { api, mockApi } from './services'
+import type { LanguageType } from './features/auth/auth.type'
+import { api, apiClient, mockApiClient } from './services'
 
 /* ----------------------------------
    localStorage helpers (ใช้เฉพาะ prod)
 ----------------------------------- */
-function saveAuthToLocalStorage(auth: AuthState) {
+function saveAuthToLocalStorage(token: string) {
     try {
-        localStorage.setItem('auth', JSON.stringify(auth))
+        localStorage.setItem('token', token)
     } catch (e) {
         console.error(e)
     }
 }
 
-function loadAuthFromLocalStorage(): AuthState | undefined {
+function saveAuthLangToLocalStorage(language: LanguageType) {
     try {
-        const serialized = localStorage.getItem('auth')
-        if (!serialized) return undefined
-        return JSON.parse(serialized)
+        localStorage.setItem('lang', language)
     } catch (e) {
         console.error(e)
-        return undefined
     }
 }
 
+function loadAuthTokenFromLocalStorage(): string | null {
+    try {
+        const serialized = localStorage.getItem('token')
+        if (!serialized) return null
+        return serialized
+    } catch (e) {
+        console.error(e)
+        return null
+    }
+}
+
+function loadAuthLangFromLocalStorage(): LanguageType {
+    try {
+        const serialized = localStorage.getItem('lang')
+        if (!serialized) return 'th'
+        const lang = serialized
+        return (lang === 'th' || lang === 'en') ? lang : 'th'
+    } catch (e) {
+        console.error(e)
+        return 'th'
+    }
+}
 /* ----------------------------------
    1️⃣ setupStore (หัวใจของการ test)
 ----------------------------------- */
 export const setupStore = (
     preloadedState?: Partial<RootState>,
     options?: {
-        api?: typeof api
+        api?: typeof apiClient
     }
 ) => {
     return configureStore({
@@ -43,22 +62,29 @@ export const setupStore = (
                 thunk: {
                     // 👈 inject api เข้า thunk
                     extraArgument: {
-                        api: options?.api ?? mockApi,
+                        api: options?.api ?? mockApiClient,
                     },
                 },
-            }),
+            }).concat(api.middleware)
     })
 }
 
 /* ----------------------------------
    2️⃣ store สำหรับ production จริง
 ----------------------------------- */
+import { initialState as authInitialState } from './features/auth/auth.slice'
+
+
 const preloadedState = {
-    auth: loadAuthFromLocalStorage(),
+    auth: {
+        ...authInitialState,
+        token: loadAuthTokenFromLocalStorage(),
+        language: loadAuthLangFromLocalStorage(),
+    }
 }
 
 export const store = setupStore(preloadedState, {
-    api: mockApi, // 👈 ใช้ mockApi แทน api
+    api: mockApiClient, // 👈 ใช้ mockApi แทน api
 })
 
 /* ----------------------------------
@@ -66,7 +92,14 @@ export const store = setupStore(preloadedState, {
 ----------------------------------- */
 store.subscribe(() => {
     const state = store.getState()
-    saveAuthToLocalStorage(state.auth)
+    if (state.auth.token) {
+        saveAuthToLocalStorage(state.auth.token)
+    } else {
+        localStorage.removeItem('token')
+    }
+    if (state.auth.language) {
+        saveAuthLangToLocalStorage(state.auth.language)
+    }
 })
 
 /* ----------------------------------

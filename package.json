@@ -41,6 +41,7 @@
     "@vitejs/plugin-react": "^5.1.2",
     "identity-obj-proxy": "^3.0.0",
     "jsdom": "^27.3.0",
+    "msw": "^2.12.4",
     "vite": "^7.3.0",
     "vitest": "^4.0.16"
   }

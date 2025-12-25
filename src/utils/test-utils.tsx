@@ -2,7 +2,7 @@ import React, { PropsWithChildren } from 'react'
 import { render } from '@testing-library/react'
 import type { RenderOptions } from '@testing-library/react'
 import { Provider } from 'react-redux'
-
+import PermissionProvider from '../hooks/usePermission/PermissionProvider';
 import type { AppStore, RootState } from '../app/store'
 import { setupStore } from '../app/store'
 import CssBaseline from '@mui/material/CssBaseline';
@@ -15,13 +15,15 @@ import {
     sidebarCustomizations,
     formInputCustomizations,
 } from '../theme/customizations';
+import { MemoryRouter } from 'react-router';
 // As a basic setup, import your same slice reducers
 // import userReducer from '../features/users/userSlice'
 
 // This type interface extends the default options for render from RTL, as well
 // as allows the user to specify other things such as initialState, store.
-interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
-    preloadedState?: Partial<RootState>
+export type PreloadedState = Partial<RootState>
+export interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
+    preloadedState?: PreloadedState
     store?: AppStore
 
 }
@@ -48,11 +50,13 @@ export function renderWithProviders(
         <Provider store={store}>
             <AppTheme themeComponents={themeComponents}>
                 <CssBaseline enableColorScheme />
-                <NotificationsProvider>
-                    <DialogsProvider>
-                        {children}
-                    </DialogsProvider>
-                </NotificationsProvider>
+                <PermissionProvider>
+                    <NotificationsProvider>
+                        <DialogsProvider>
+                            {children}
+                        </DialogsProvider>
+                    </NotificationsProvider>
+                </PermissionProvider>
             </AppTheme>
 
         </Provider>
@@ -64,3 +68,17 @@ export function renderWithProviders(
         ...render(ui, { wrapper: Wrapper, ...renderOptions })
     }
 }
+export function renderWithProviderMemoryRouter(
+    initialEntries = ['/'],
+    stateOverrides: Partial<RootState> = {},
+    ui: React.ReactNode,
+
+) {
+    return renderWithProviders(
+        <MemoryRouter initialEntries={initialEntries}>
+            {ui}
+        </MemoryRouter>,
+        { preloadedState: { ...stateOverrides } }
+    );
+}
+

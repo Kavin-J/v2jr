@@ -7,9 +7,11 @@ import { Outlet } from 'react-router';
 import AppHeader from './AppHeader';
 import AppSidebar from './AppSidebar';
 import SitemarkIcon from '../../SitemarkIcon';
-import { useAppSelector } from '../../../app/hook';
-import { selectIsAuthenticated } from '../../../app/features/auth/auth.selectors';
+import { useAppDispatch, useAppSelector } from '../../../app/hook';
+import { selectAuthLoading, selectAuthToken, selectAuthUser } from '../../../app/features/auth/auth.selectors';
 import { Navigate } from 'react-router';
+import { getUserInfo } from '../../../app/features/auth/auth.thunks';
+import LoadingScreen from '../../LoadingScreen';
 
 export default function AppLayout() {
   const theme = useTheme();
@@ -49,10 +51,22 @@ export default function AppLayout() {
 
   const layoutRef = React.useRef<HTMLDivElement>(null);
 
-  const isAuthenticated = useAppSelector(selectIsAuthenticated);
-
-  if (!isAuthenticated) {
+  const token = useAppSelector(selectAuthToken)
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(selectAuthUser)
+  const loading = useAppSelector(selectAuthLoading)
+  React.useEffect(() => {
+    if (!user) {
+      dispatch(getUserInfo());
+    }
+  }, [user, dispatch]);
+  if (!token) {
     return <Navigate to="/login" replace />;
+  }
+  if (loading) {
+    return <LoadingScreen
+      open={true}
+    />
   }
 
   return (

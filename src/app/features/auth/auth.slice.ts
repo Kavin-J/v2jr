@@ -1,14 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { User } from './auth.type';
 import { AuthState } from './auth.type';
-import { loginCredentials } from './auth.thunks';
+import { getUserInfo, loginCredentials } from './auth.thunks';
 import { LanguageType } from './auth.type';
 
-const initialState: AuthState = {
+export const initialState: AuthState = {
     user: null,
     isAuthenticated: false,
     token: null,
-    permission: [],
+    permissions: [],
     error: null,
     loading: false,
     language: 'th',
@@ -18,18 +18,20 @@ export const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        login: (state, action: PayloadAction<{ user: User, token: string, language: LanguageType, permission: string[] }>) => {
+        login: (state, action: PayloadAction<{ user: User, token: string, language: LanguageType, permissions: string[] }>) => {
             state.user = action.payload.user;
             state.isAuthenticated = true;
             state.token = action.payload.token;
-            state.permission = action.payload.permission;
+            state.permissions = action.payload.permissions;
             state.language = action.payload.language;
         },
         logout: (state) => {
             state.user = null;
             state.isAuthenticated = false;
             state.token = null;
-            state.permission = [];
+            state.permissions = [];
+            state.error = null;
+            state.loading = false;
         },
         setLanguage: (state, action: PayloadAction<LanguageType>) => {
             state.language = action.payload;
@@ -41,7 +43,10 @@ export const authSlice = createSlice({
             state.loading = action.payload;
         },
         setPermission: (state, action: PayloadAction<string[]>) => {
-            state.permission = action.payload;
+            state.permissions = action.payload;
+        },
+        setToken: (state, action: PayloadAction<string>) => {
+            state.token = action.payload;
         },
 
     },
@@ -50,13 +55,10 @@ export const authSlice = createSlice({
             .addCase(loginCredentials.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(loginCredentials.fulfilled, (state, action: PayloadAction<{ user: User, token: string, language: LanguageType, permission: string[] }>) => {
+            .addCase(loginCredentials.fulfilled, (state, action: PayloadAction<{ token: string | null; isAuthenticated: boolean; }>) => {
                 state.loading = false;
-                state.user = action.payload.user;
                 state.token = action.payload.token;
-                state.isAuthenticated = true;
-                state.language = action.payload.language;
-                state.permission = action.payload.permission;
+                state.isAuthenticated = action.payload.isAuthenticated;
                 state.error = null;
             })
             .addCase(loginCredentials.rejected, (state, action) => {
@@ -66,9 +68,26 @@ export const authSlice = createSlice({
                 state.user = null;
                 state.error = action.payload || action.error.message || 'Login failed';
             })
+        builder
+            .addCase(getUserInfo.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getUserInfo.fulfilled, (state, action: PayloadAction<{ user: User; permissions: string[]; language: LanguageType }>) => {
+                state.loading = false;
+                state.user = action.payload.user;
+                state.permissions = action.payload.permissions;
+                state.language = action.payload.language;
+            })
+            .addCase(getUserInfo.rejected, (state, action) => {
+                state.loading = false;
+                state.isAuthenticated = false;
+                state.token = null;
+                state.user = null;
+                state.error = action.payload || action.error.message || 'Fetch failed';
+            })
     },
 });
 
-export const { login, logout, setError, setLoading, setLanguage, setPermission } = authSlice.actions;
+export const { login, logout, setError, setLoading, setLanguage, setPermission, setToken } = authSlice.actions;
 
 export default authSlice.reducer;

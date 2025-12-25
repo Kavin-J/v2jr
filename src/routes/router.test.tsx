@@ -1,7 +1,7 @@
 import { screen, waitFor } from '@testing-library/react';
-import { MemoryRouter, RouterProvider, createMemoryRouter } from 'react-router';
+import { RouterProvider, createMemoryRouter } from 'react-router';
 import { routes } from './router';
-import { vi, describe, it, expect } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { renderWithProviders } from '../utils/test-utils';
 import { RoleType, LanguageType } from '../app/features/auth/auth.type';
 import { RootState } from '../app/store';
@@ -22,6 +22,7 @@ describe('Router Configuration', () => {
         error: null,
         loading: false,
         language: 'en',
+        permission: [],
         ...authStateOverrides
       }
     };
@@ -58,7 +59,6 @@ describe('Router Configuration', () => {
       language: 'en',
       token: 'test-token'
     });
-    screen.debug();
 
     // Regex handles possible missing space in the component text "Dashboard(All..."
     expect(screen.getByRole('heading', { name: /Dashboard/i })).toBeInTheDocument();
@@ -72,66 +72,9 @@ describe('Router Configuration', () => {
       language: 'en',
       token: 'test-token'
     });
-    screen.debug();
 
     expect(screen.getByRole('heading', { name: /Admin/i })).toBeInTheDocument();
     expect(screen.getByTestId('language-selector')).toBeInTheDocument();
   });
-  it('renders Admin Page for admin user', () => {
-    // renderRouter(['/admin'], {
-    //   isAuthenticated: true,
-    //   user: { id: '1', name: 'Admin', email: 'admin@test.com', role: 'admin' as RoleType },
-    //   language: 'en',
-    //   token: 'test-token'
-    // });
-    // screen.debug();
 
-    // expect(screen.getByRole('heading', { name: /Admin/i })).toBeInTheDocument();
-    // expect(screen.getByTestId('language-selector')).toBeInTheDocument();
-  });
-  // it('redirects staff from /admin to / (Dashboard)', async () => {
-  //   renderRouter(['/admin'], {
-  //     isAuthenticated: true,
-  //     user: { id: '2', name: 'Staff', email: 'staff@test.com', role: 'staff' as RoleType },
-  //     language: 'en'
-  //   });
-
-  //   // Should redirect to Dashboard
-  //   await waitFor(() => {
-  //     expect(screen.getByText(/Dashboard\s*\(All Authenticated Users\)/i)).toBeInTheDocument();
-  //   });
-  //   // And NOT see Admin content
-  //   expect(screen.queryByText('Admin Page')).not.toBeInTheDocument();
-  // });
-
-  // it('renders Supervisor Page for supervisor user', () => {
-  //   renderRouter(['/supervisor'], {
-  //     isAuthenticated: true,
-  //     user: { id: '3', name: 'Supervisor', email: 'sup@test.com', role: 'supervisor' as RoleType }
-  //   });
-
-  //   expect(screen.getByText('Supervisor Page')).toBeInTheDocument();
-  // });
-
-  // it('redirects admin from /supervisor to / (Dashboard)', async () => {
-  //   renderRouter(['/supervisor'], {
-  //     isAuthenticated: true,
-  //     user: { id: '1', name: 'Admin', email: 'admin@test.com', role: 'admin' as RoleType },
-  //     language: 'en'
-  //   });
-
-  //   await waitFor(() => {
-  //     expect(screen.getByText(/Dashboard\s*\(All Authenticated Users\)/i)).toBeInTheDocument();
-  //   });
-  // });
-
-  // it('renders Staff Page for staff user', () => {
-  //   renderRouter(['/staff'], {
-  //     isAuthenticated: true,
-  //     user: { id: '2', name: 'Staff', email: 'staff@test.com', role: 'staff' as RoleType },
-  //     language: 'en'
-  //   });
-
-  //   expect(screen.getByText('Staff Page')).toBeInTheDocument();
-  // });
 });

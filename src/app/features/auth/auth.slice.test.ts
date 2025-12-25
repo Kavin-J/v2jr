@@ -11,7 +11,7 @@ describe('auth reducer', () => {
         error: null,
         loading: false,
         language: 'th',
-        permission: [],
+        permissions: [],
     };
 
     it('should return the initial state', () => {
@@ -22,7 +22,7 @@ describe('auth reducer', () => {
             loading: false,
             token: null,
             language: 'th',
-            permission: [],
+            permissions: [],
         });
     });
 
@@ -33,13 +33,13 @@ describe('auth reducer', () => {
             email: 'test@example.com',
             role: 'staff',
         };
-        const actual = authReducer(initialState, login({ user, token: 'test-token', language: 'th', permission: ['*'] }));
+        const actual = authReducer(initialState, login({ user, token: 'test-token', language: 'th', permissions: ['*'] }));
         expect(actual.user).toEqual(user);
         expect(actual.isAuthenticated).toBe(true);
         expect(actual.loading).toBe(false);
         expect(actual.token).toBe('test-token');
         expect(actual.language).toBe('th');
-        expect(actual.permission).toEqual(['*']);
+        expect(actual.permissions).toEqual(['*']);
     });
 
     it('should handle logout', () => {
@@ -54,14 +54,14 @@ describe('auth reducer', () => {
             isAuthenticated: true,
             token: 'test-token',
             language: 'th',
-            permission: ['*'],
+            permissions: ['*'],
         };
         const actual = authReducer(loggedInState, logout());
         expect(actual.user).toBeNull();
         expect(actual.isAuthenticated).toBe(false);
         expect(actual.token).toBeNull();
         expect(actual.language).toBe('th');
-        expect(actual.permission).toEqual([]);
+        expect(actual.permissions).toEqual([]);
     });
 
     it('should handle setLanguage', () => {
@@ -77,7 +77,7 @@ describe('auth reducer', () => {
 
     it('should handle setPermission', () => {
         const actual = authReducer(initialState, setPermission(['*']));
-        expect(actual.permission).toEqual(['*']);
+        expect(actual.permissions).toEqual(['*']);
     });
 
     it('should handle setLoading', () => {
@@ -100,23 +100,51 @@ describe('auth reducer', () => {
                 role: 'staff',
             };
             const token = 'test-token';
-            const language: LanguageType = 'th';
-            const permission: string[] = ['*'];
-            const action = { type: 'auth/loginCredentials/fulfilled', payload: { user, token, language, permission } };
+            const action = { type: 'auth/loginCredentials/fulfilled', payload: { token, isAuthenticated: true } };
             const actual = authReducer(initialState, action);
 
             expect(actual.loading).toBe(false);
-            expect(actual.user).toEqual(user);
             expect(actual.token).toBe(token);
             expect(actual.isAuthenticated).toBe(true);
             expect(actual.error).toBeNull();
-            expect(actual.language).toBe(language);
-            expect(actual.permission).toEqual(permission);
         });
 
         it('should handle rejected', () => {
             const errorMsg = 'Login failed';
             const action = { type: 'auth/loginCredentials/rejected', payload: errorMsg };
+            const actual = authReducer(initialState, action);
+
+            expect(actual.loading).toBe(false);
+            expect(actual.isAuthenticated).toBe(false);
+            expect(actual.token).toBeNull();
+            expect(actual.user).toBeNull();
+            expect(actual.error).toBe(errorMsg);
+        });
+    });
+    describe('getUserInfo', () => {
+        it('should handle pending', () => {
+            const action = { type: 'auth/getUserInfo/pending' };
+            const actual = authReducer(initialState, action);
+            expect(actual.loading).toBe(true);
+        });
+        it('should handle fulfilled', () => {
+            const user: User = {
+                id: '1',
+                name: 'Test User',
+                email: 'test@example.com',
+                role: 'staff',
+            };
+            const action = { type: 'auth/getUserInfo/fulfilled', payload: { user, permissions: ['*'], language: 'th' } };
+            const actual = authReducer(initialState, action);
+
+            expect(actual.loading).toBe(false);
+            expect(actual.user).toEqual(user);
+            expect(actual.permissions).toEqual(['*']);
+            expect(actual.language).toBe('th');
+        });
+        it('should handle rejected', () => {
+            const errorMsg = 'Fetch failed';
+            const action = { type: 'auth/getUserInfo/rejected', payload: errorMsg };
             const actual = authReducer(initialState, action);
 
             expect(actual.loading).toBe(false);

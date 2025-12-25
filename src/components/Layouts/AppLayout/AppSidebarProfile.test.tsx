@@ -10,7 +10,7 @@ import { AppSidebarContextType } from "../../../context/AppSidebarContext";
 
 describe('AppSidebarProfile', () => {
     const renderRouterWithAuth = (initialEntries = ['/'], authStateOverrides: Partial<AuthState> = {}, ui: React.ReactElement, valueOverrides: Partial<AppSidebarContextType> = {}) => {
-        const preloadedState: RootState = {
+        const preloadedState: Partial<RootState> = {
             auth: {
                 user: null,
                 token: null,
@@ -18,8 +18,10 @@ describe('AppSidebarProfile', () => {
                 error: null,
                 loading: false,
                 language: 'en',
+                permissions: [],
                 ...authStateOverrides
             }
+
         };
         const value = {
             onPageItemClick: () => { },
@@ -33,7 +35,6 @@ describe('AppSidebarProfile', () => {
         return renderWithProviders(
             <MemoryRouter initialEntries={initialEntries}>
                 <AppSidebarContext.Provider value={value}>
-
                     {ui}
                 </AppSidebarContext.Provider>
             </MemoryRouter>,
@@ -53,6 +54,7 @@ describe('AppSidebarProfile', () => {
                     id: '1',
                 },
                 isAuthenticated: true,
+                permissions: [],
                 loading: false,
                 error: null,
                 token: 'token',
@@ -79,6 +81,7 @@ describe('AppSidebarProfile', () => {
                     id: '1',
                 },
                 isAuthenticated: true,
+                permissions: [],
                 loading: false,
                 error: null,
                 token: 'token',
@@ -103,6 +106,7 @@ describe('AppSidebarProfile', () => {
                     id: '1',
                 },
                 isAuthenticated: true,
+                permissions: [],
                 loading: false,
                 error: null,
                 token: 'token',

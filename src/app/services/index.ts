@@ -1,8 +1,10 @@
-import { authApi } from "./authApi";
+import { apiClient } from "./apiClient/apiClient";
+import { authApiClient } from "./apiClient/authApiClient";
 import { api } from "./api";
-import { mockAuthApi } from "./mock_authApi";
-import { mockApi } from "./mock_api";
-export { api, authApi, mockAuthApi, mockApi }
-export type { ApiClient } from "./apiClient";
-export type { AuthApiClient } from "./authApiClient";
+import { mockApiClient } from "./apiClient/mock_apiClient";
+import { mockAuthApiClient } from "./apiClient/mock_authApiClient";
+import { userApi } from "./userApi";
+export { apiClient, authApiClient, api, mockApiClient, mockAuthApiClient, userApi }
+export type { ApiClient } from "./apiClient/apiClient";
+export type { AuthApiClient } from "./apiClient/authApiClient";
 export type { baseResponse } from "./types";

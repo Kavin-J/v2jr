@@ -1,4 +1,4 @@
-import { selectAuthPermission, selectAuthRole } from "../../app/features/auth/auth.selectors"
+import { selectAuthPermissions, selectAuthRole } from "../../app/features/auth/auth.selectors"
 import { useAppSelector } from "../../app/hook"
 import { PermissionContext } from "./PermisstionContext"
 import { RoleType } from "../../app/features/auth/auth.type"
@@ -22,7 +22,7 @@ export default function PermissionProvider({ children }: { children: React.React
         })
     }
     const role = useAppSelector(selectAuthRole) || null;
-    const permissions = useAppSelector(selectAuthPermission) || [];
+    const permissions = useAppSelector(selectAuthPermissions) || [];
     const hasRole = (targetRole: RoleType) => role === targetRole;
     const can = (permission: string) => hasPermission(permissions, permission);
     const canRead = (permissionEntity: string) => hasPermission(permissions, permissionEntity + ".read");
