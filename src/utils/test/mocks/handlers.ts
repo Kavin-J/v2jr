@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import { baseResponse } from '../../../../src/app/services/types';
-import { MOCK_USERS, mockLogin } from '../../../app/features/auth/__mock__/user';
+import { MOCK_USERS } from '../../../app/features/auth/__mock__/user';
 import { LoginPayload } from '../../../app/features/auth/auth.thunks';
 import { LanguageType, User } from '../../../app/features/auth/auth.type';
 
@@ -32,8 +32,8 @@ export const handlers = [
         if (!user) {
             return HttpResponse.json<baseResponse<{ user: User & { permissions: string[], language: LanguageType } }>>({
                 success: false,
-                message: 'User not found',
-                status: 404
+                message: 'Unauthorized',
+                status: 401
             })
         }
         return HttpResponse.json<baseResponse<{ user: User & { permissions: string[], language: LanguageType } }>>({
@@ -64,17 +64,17 @@ export const handlers = [
             avatar
         } as User))
         if (!user) {
-            return HttpResponse.json<baseResponse<{ users: User[] }>>({
-                message: 'fetch users retrieved',
-                status: 200,
-                success: true,
-                data: { users }
+            return HttpResponse.json<baseResponse<{ users: User[]; total: number }>>({
+                message: 'Unauthorized',
+                status: 401,
+                success: false,
             })
         }
-        return HttpResponse.json<baseResponse<{ users: User[] }>>({
-            message: 'users not found',
-            status: 404,
+        return HttpResponse.json<baseResponse<{ users: User[]; total: number }>>({
+            message: 'Users retrieved',
+            status: 200,
             success: true,
+            data: { users, total: MOCK_USERS.length }
         })
     })
 ]

@@ -8,7 +8,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "jsdom",
-    setupFiles: "./src/setupTests.ts",
+    setupFiles: "./src/setup.ts",
     alias: {
       "\\.(css|less|sass|scss)$": "identity-obj-proxy",
     },
