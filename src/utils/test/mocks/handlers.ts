@@ -1,4 +1,4 @@
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse, delay } from 'msw'
 import { baseResponse } from '../../../../src/app/services/types';
 import { MOCK_USERS } from '../../../app/features/auth/__mock__/user';
 import { LoginPayload } from '../../../app/features/auth/auth.thunks';
@@ -8,6 +8,7 @@ export const handlers = [
     http.post(import.meta.env.VITE_API_URL + '/auth/login', async ({ request }) => {
         const body = await request.json() as LoginPayload;
         const user = MOCK_USERS.find((user) => user.email === body.email);
+        await delay(1000)
         if (user && user.password === body.password) {
             return HttpResponse.json<baseResponse<{ token: string }>>({
                 success: true,
@@ -26,9 +27,10 @@ export const handlers = [
         })
     }),
 
-    http.get(import.meta.env.VITE_API_URL + '/auth/user-info', ({ request }) => {
+    http.get(import.meta.env.VITE_API_URL + '/auth/user-info', async ({ request }) => {
         const token = request.headers.get('Authorization')?.split('Bearer ')[1];
         const user = MOCK_USERS.find((user) => user.token === token);
+        await delay(1000)
         if (!user) {
             return HttpResponse.json<baseResponse<{ user: User & { permissions: string[], language: LanguageType } }>>({
                 success: false,
@@ -53,9 +55,10 @@ export const handlers = [
             status: 200
         })
     }),
-    http.get(import.meta.env.VITE_API_URL + '/users', ({ request }) => {
+    http.get(import.meta.env.VITE_API_URL + '/users', async ({ request }) => {
         const token = request.headers.get('Authorization')?.split('Bearer ')[1];
         const user = MOCK_USERS.find((user) => user.token === token);
+        await delay(1000)
         const users = MOCK_USERS.map(({ id, role, name, email, avatar }) => ({
             id,
             role,

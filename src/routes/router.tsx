@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import AppLayout from '../components/Layouts/AppLayout/AppLayout';
 import Dashboard from '../pages/Dashboard';
 import ProfilePage from '../pages/ProfilePage';
+import UsersPage from '../pages/UsersPage';
 
 export const routes: RouteObject[] = [
   {
@@ -31,6 +32,10 @@ export const routes: RouteObject[] = [
                 < Typography > Only accessible by Admin.</Typography>
               </Box>
             ),
+          },
+          {
+            path: "/users",
+            element: <UsersPage />
           },
         ],
       },

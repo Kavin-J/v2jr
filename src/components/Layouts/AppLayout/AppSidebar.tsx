@@ -151,35 +151,16 @@ export default function AppSidebar({
               icon={<BarChartIcon />}
               href={role === "admin" ? "/admin" : role === "supervisor" ? "/supervisor" : "/staff"}
               selected={!!matchPath('/' + role, pathname)}
-            // defaultExpanded={!!matchPath('/' + role, pathname)}
-            // expanded={expandedItemIds.includes(role)}
-            // nestedNavigation={
-            //   <List
-            //     dense
-            //     sx={{
-            //       padding: 0,
-            //       my: 1,
-            //       pl: mini ? 0 : 1,
-            //       minWidth: 240,
-            //     }}
-            //   >
-            //     <AppSidebarPageItem
-            //       id="sales"
-            //       title="Sales"
-            //       icon={<DescriptionIcon />}
-            //       href="/reports/sales"
-            //       selected={!!matchPath('/reports/sales', pathname)}
-            //     />
-            //     <AppSidebarPageItem
-            //       id="traffic"
-            //       title="Traffic"
-            //       icon={<DescriptionIcon />}
-            //       href="/reports/traffic"
-            //       selected={!!matchPath('/reports/traffic', pathname)}
-            //     />
-            //   </List>
-            // }
             />
+            {role === "admin" && (
+              <AppSidebarPageItem
+                id="users"
+                title="Users"
+                icon={<DescriptionIcon />}
+                href="/users"
+                selected={!!matchPath('/users', pathname)}
+              />
+            )}
             <AppSidebarPageItem
               id="reports"
               title="Reports"
